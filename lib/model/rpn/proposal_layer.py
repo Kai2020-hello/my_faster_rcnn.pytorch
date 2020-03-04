@@ -1,13 +1,13 @@
+# coding=utf-8 
 import torch
 import torch.nn as nn
 import numpy as np
 import math
-import yaml
-from model.utils.config import cfg
+from lib.model.utils.config import cfg
 
 from .generate_anchors import generate_anchors
 from .bbox_transform import bbox_transform_inv, clip_boxes
-from model.nms.nms_wrapper import nms
+from torchvision.ops import nms
 #----------------------------
 #
 #----------------------------
@@ -84,7 +84,7 @@ class _ProposalLayer(nn.Module):
             scores_single = scores_single[order_single].view(-1,1)
 
             # nms 
-            keep_idx_i = nms(torch.cat((proposals_single, scores_single), 1), nms_thresh, force_cpu=not cfg.USE_GPU_NMS)
+            keep_idx_i = nms(proposals_single, scores_single, nms_thresh)
             keep_idx_i = keep_idx_i.long().view(-1)
 
             if post_nms_topN > 0:
@@ -100,8 +100,8 @@ class _ProposalLayer(nn.Module):
         return output
 
         def backward(self, top, propagate_down, bottom):
-        """This layer does not propagate gradients."""
-        pass
+            """This layer does not propagate gradients."""
+            pass
 
     def reshape(self, bottom, top):
         """Reshaping happens during the call to forward."""

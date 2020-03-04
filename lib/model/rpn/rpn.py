@@ -1,8 +1,13 @@
+# coding=utf-8 
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from .anchor_target_layer import _AnchorTargetLayer
+from lib.model.utils.config import cfg
+from .proposal_layer import _ProposalLayer
+from lib.model.utils.net_utils import _smooth_l1_loss
 
 
 class _RPN(nn.Module):
@@ -100,7 +105,6 @@ class _RPN(nn.Module):
 
 
         return rois, self.rpn_loss_cls, self.rpn_loss_box
-
 
 
 

@@ -1,3 +1,4 @@
+# coding=utf-8 
 from __future__ import absolute_import
 # --------------------------------------------------------
 # Faster R-CNN
@@ -14,13 +15,18 @@ import torch.nn as nn
 import numpy as np
 import numpy.random as npr
 
-from model.utils.config import cfg
+from lib.model.utils.config import cfg
 from .generate_anchors import generate_anchors
 from .bbox_transform import clip_boxes, bbox_overlaps_batch, bbox_transform_batch
 
 import pdb
 
 DEBUG = False
+
+try:
+    long        # Python 2
+except NameError:
+    long = int  # Python 3
 
 
 class _AnchorTargetLayer(nn.Module):
@@ -64,6 +70,7 @@ class _AnchorTargetLayer(nn.Module):
         shift_x, shift_y = np.meshgrid(shift_x, shift_y)
         shifts = torch.from_numpy(np.vstack((shift_x.ravel(), shift_y.ravel(),
                                   shift_x.ravel(), shift_y.ravel())).transpose())
+
         shifts = shifts.contiguous().type_as(rpn_cls_score).float()
 
         A = self._num_anchors
@@ -99,6 +106,7 @@ class _AnchorTargetLayer(nn.Module):
             labels[max_overlaps < cfg.TRAIN.RPN_NEGATIVE_OVERLAP] = 0
 
         gt_max_overlaps[gt_max_overlaps==0] = 1e-5
+        
         keep = torch.sum(overlaps.eq(gt_max_overlaps.view(batch_size,1,-1).expand_as(overlaps)), 2)
 
         if torch.sum(keep) > 0:

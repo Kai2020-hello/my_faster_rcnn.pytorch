@@ -1,3 +1,5 @@
+# coding=utf-8 
+
 #################################
 #       faster_rcnn的骨架        #
 #                               #
@@ -30,6 +32,9 @@ class _fasterRCNN(nn.Module):
         #self.RCNN_roi_pool =  # TODO 后面添加
         #self.RCNN_roi_align =  
         #self.RCNN_roi_crop = # TODO 后面添加
+
+    def forward(self, im_data, im_info, gt_boxes, num_boxes):
+        
 
 
 
